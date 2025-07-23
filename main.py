@@ -1,24 +1,21 @@
-# 🚫 Block voice/audio modules in discord.py to stop 'audioop' import
+# 🛑 Patch discord.py voice features (prevents 'audioop' import)
 import sys
 import types
 
-# Fake empty modules to prevent import errors
-sys.modules['audioop'] = types.ModuleType("audioop")
-sys.modules['discord.player'] = types.ModuleType("discord.player")
-sys.modules['discord.voice_client'] = types.ModuleType("discord.voice_client")
+# Create dummy modules to block import errors
+dummy_module = types.ModuleType("dummy")
+sys.modules["audioop"] = dummy_module
+sys.modules["discord.voice_client"] = dummy_module
+sys.modules["discord.player"] = dummy_module
+sys.modules["discord.voice_client.VoiceClient"] = dummy_module
+sys.modules["discord.voice_client.VoiceProtocol"] = dummy_module
 
-# ✅ Now continue with real imports
+# ✅ Now safe to import the rest
 import discord
 from discord.ext import commands
 import google.generativeai as genai
-import random
 import os
-import asyncio
-import discord
-from discord.ext import commands
-import google.generativeai as genai
 import random
-import os
 import asyncio
 
 # Gemini Setup
