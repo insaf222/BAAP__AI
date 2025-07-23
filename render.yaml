@@ -2,10 +2,13 @@ services:
   - type: web
     name: baap-ai
     env: python
+    plan: free
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python main.py"
     envVars:
-      - key: GEMINI_API_KEY
-        sync: false
       - key: DISCORD_TOKEN
         sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+    region: oregon
+    runtime: python
