@@ -1,5 +1,19 @@
+# 🚫 Block voice/audio modules in discord.py to stop 'audioop' import
 import sys
-sys.modules["audioop"] = None
+import types
+
+# Fake empty modules to prevent import errors
+sys.modules['audioop'] = types.ModuleType("audioop")
+sys.modules['discord.player'] = types.ModuleType("discord.player")
+sys.modules['discord.voice_client'] = types.ModuleType("discord.voice_client")
+
+# ✅ Now continue with real imports
+import discord
+from discord.ext import commands
+import google.generativeai as genai
+import random
+import os
+import asyncio
 import discord
 from discord.ext import commands
 import google.generativeai as genai
