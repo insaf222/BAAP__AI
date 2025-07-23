@@ -1,16 +1,23 @@
-# 🛑 Patch discord.py voice features (prevents 'audioop' import)
+# 🛑 Patch discord.voice_client and friends to avoid 'audioop' crash
 import sys
 import types
 
-# Create dummy modules to block import errors
-dummy_module = types.ModuleType("dummy")
-sys.modules["audioop"] = dummy_module
-sys.modules["discord.voice_client"] = dummy_module
-sys.modules["discord.player"] = dummy_module
-sys.modules["discord.voice_client.VoiceClient"] = dummy_module
-sys.modules["discord.voice_client.VoiceProtocol"] = dummy_module
+# Dummy VoiceClient and VoiceProtocol classes to trick discord.py
+class DummyVoiceClient:
+    pass
 
-# ✅ Now safe to import the rest
+class DummyVoiceProtocol:
+    pass
+
+# Create fake voice_client module with the dummy classes
+voice_client_patch = types.ModuleType("discord.voice_client")
+voice_client_patch.VoiceClient = DummyVoiceClient
+voice_client_patch.VoiceProtocol = DummyVoiceProtocol
+
+# Apply the patch to system modules
+sys.modules["audioop"] = types.ModuleType("audioop")  # Block audioop
+sys.modules["discord.voice_client"] = voice_client_patch
+sys.modules["discord.player"] = types.ModuleType("discord.player")  # Block audio source module
 import discord
 from discord.ext import commands
 import google.generativeai as genai
