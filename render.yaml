@@ -12,3 +12,5 @@ services:
         sync: false
     region: oregon
     runtime: python
+build:
+  pythonVersion: 3.11.9
