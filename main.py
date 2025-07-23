@@ -1,23 +1,25 @@
-# 🛑 Patch discord.voice_client and friends to avoid 'audioop' crash
+# 🛑 Block all discord voice features safely to avoid 'audioop' errors
 import sys
 import types
 
-# Dummy VoiceClient and VoiceProtocol classes to trick discord.py
+# Custom dummy VoiceClient with expected attributes
 class DummyVoiceClient:
-    pass
+    warn_nacl = False  # Required by discord.client
+    def __init__(self, *args, **kwargs):
+        pass
 
 class DummyVoiceProtocol:
-    pass
+    def __init__(self, *args, **kwargs):
+        pass
 
-# Create fake voice_client module with the dummy classes
+# Patch the modules
 voice_client_patch = types.ModuleType("discord.voice_client")
 voice_client_patch.VoiceClient = DummyVoiceClient
 voice_client_patch.VoiceProtocol = DummyVoiceProtocol
 
-# Apply the patch to system modules
-sys.modules["audioop"] = types.ModuleType("audioop")  # Block audioop
+sys.modules["audioop"] = types.ModuleType("audioop")
 sys.modules["discord.voice_client"] = voice_client_patch
-sys.modules["discord.player"] = types.ModuleType("discord.player")  # Block audio source module
+sys.modules["discord.player"] = types.ModuleType("discord.player")
 import discord
 from discord.ext import commands
 import google.generativeai as genai
